@@ -43,7 +43,8 @@ catch {
 # 2) Call Defender for Endpoint API
 # -----------------------------------
 # Example: Get a list of machines
-$mdeEndpoint = "https://api.securitycenter.microsoft.com/api/machines"
+# Source: https://learn.microsoft.com/en-us/defender-endpoint/api/get-machines
+$mdeEndpoint = "https://api.security.microsoft.com/api/machines"
 
 # Construct the Authorization header
 $headers = @{
