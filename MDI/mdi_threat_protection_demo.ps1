@@ -2,6 +2,8 @@
 # Sources: 
 # - https://jeffreyappel.nl/how-to-implement-defender-for-identity-and-configure-all-prerequisites/
 
+# Be sure to DEFANG MDAV (Microsoft Defender Antivirus)
+
 # Create C:\tools file share on DC - RCCE-SVR19-1
 # Copy the contents from \\RCCE-SVR19-1\tools to C:\Tools
 Copy-Item -Path "\\RCCE-SVR19-1\tools\*" -Destination "C:\tools\" -Recurse -Force
@@ -48,6 +50,7 @@ net group "Enterprise Admins" /domain
 net group "Schema Admins" /domain
 
 # Suspicious additions to sensitive groups
+net user RonHD Passw0rd123 /FULLNAME:"Ron HD" /DOMAIN /add
 Add-ADGroupMember -Identity "Domain Admins" -Members RonHD
 
 Get-ADUser -Identity "ronhd" -Properties LockedOut | Select-Object SamAccountName, LockedOut
