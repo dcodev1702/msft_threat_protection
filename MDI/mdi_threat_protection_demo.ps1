@@ -52,6 +52,8 @@ net group "Schema Admins" /domain
 
 # Suspicious additions to sensitive groups
 net user RonHD Passw0rd123 /FULLNAME:"Ron HD" /DOMAIN /add
+Invoke-Command -ComputerName RCCE-WKS-1 -ScriptBlock { net localgroup Administrators cloundhunters.local\RonHD /add }
+
 Add-ADGroupMember -Identity "Domain Admins" -Members RonHD
 
 Get-ADUser -Identity "ronhd" -Properties LockedOut | Select-Object SamAccountName, LockedOut
