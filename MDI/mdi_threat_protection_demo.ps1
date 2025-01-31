@@ -1,6 +1,8 @@
-# This information was compiled and borrowed from a number of different online sources used to demo threat protection for MDI
-# Sources: 
-# - https://jeffreyappel.nl/how-to-implement-defender-for-identity-and-configure-all-prerequisites/
+<# This information was compiled and borrowed from a number of different online sources used to demo threat protection for MDI
+   Sources: 
+   - https://jeffreyappel.nl/how-to-implement-defender-for-identity-and-configure-all-prerequisites/
+   - https://microsoft.github.io/TechExcel-Defender-for-Identity/
+#>
 
 # Be sure to DEFANG MDAV (Microsoft Defender Antivirus) before running these tools on the endpoint
 # The Win10 client is domain joined with the domain user having local admin privs
