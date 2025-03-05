@@ -10,7 +10,9 @@ $users = @(
     @("Lorenzo Ireland", "Lorenzo", "Ireland", "gcc", "gcc@hawk-ir.local"),
     @("Jon Butler", "Jon", "Butler", "jjbottles", "jjbottles@hawk-ir.local"),
     @("Paul Navarro", "Paul", "Navarro", "pjhawk", "pjhawk@hawk-ir.local"),
-    @("Ron HD", "Ron", "HD", "ronhd", "ronhd@hawk-ir.local")
+    @("Ron HD", "Ron", "HD", "ronhd", "ronhd@hawk-ir.local"),
+    @("Destiny Staton", "Destiny", "Staton", "dstaton", "dstaton@hawk-ir.local")
+    
 )
 
 foreach ($user in $users) {
