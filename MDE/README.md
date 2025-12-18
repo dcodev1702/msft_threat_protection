@@ -1,8 +1,7 @@
 # Microsoft Defender for Endpoint API - Software Inventory Guide
 ## Azure Commercial & Azure US Government
 
-<img width="1010" height="1250" alt="image" src="https://github.com/user-attachments/assets/eb114c93-4b6e-4c05-bdb9-9ca49e327096" />
-
+<img width="915" height="1281" alt="image" src="https://github.com/user-attachments/assets/50359c6a-b7e9-450b-a707-a19cb2391443" />
 
 ---
 
