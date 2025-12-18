@@ -50,15 +50,16 @@ catch {
 
 # Set endpoints based on environment
 $AuthEndpoint = (Get-AzContext).Environment.ActiveDirectoryAuthority
+# /.default includes all of your assigned scopes (e.g. Software.Read)
 switch ($Environment) {
     'Commercial' {
         $ApiEndpoint = "https://api.securitycenter.microsoft.com"
-        $Scopes = @("https://api.securitycenter.microsoft.com/Software.Read")
+        $Scopes = @("https://api.securitycenter.microsoft.com/.default")
         Write-Host "`nEnvironment: Azure Commercial" -ForegroundColor Cyan
     }
     'Government' {
         $ApiEndpoint = "https://api-gov.securitycenter.microsoft.us"
-        $Scopes = @("https://api.securitycenter.microsoft.us/Software.Read")
+        $Scopes = @("https://api.securitycenter.microsoft.us/.default")
         Write-Host "`nEnvironment: Azure US Government" -ForegroundColor Cyan
     }
 }
