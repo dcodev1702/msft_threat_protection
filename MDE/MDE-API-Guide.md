@@ -1,5 +1,5 @@
 # Microsoft Defender for Endpoint API - Software Inventory Guide
-## Azure US Government (IL-5 / GCC High)
+## Azure Commercial & Azure US Government
 
 ---
 
@@ -7,6 +7,30 @@
 **Software Inventory API:** https://learn.microsoft.com/en-us/defender-endpoint/api/get-software
 
 **Azure Government Endpoints:** https://learn.microsoft.com/en-us/defender-endpoint/gov
+
+---
+
+## Choose Your Environment
+
+### Azure Commercial (Worldwide)
+| Endpoint Type | URL |
+|--------------|-----|
+| Authentication | `https://login.microsoftonline.com` |
+| MDE API | `https://api.securitycenter.microsoft.com` |
+| API Scope | `https://api.securitycenter.microsoft.com/Software.Read` |
+| Redirect URI #1 | `https://login.microsoftonline.com/common/oauth2/nativeclient` |
+| Redirect URI #2 | `msal6aa843c2-fdf2-4622-a627-61a285a4e5c1://auth` |
+
+### Azure US Government (GCC High / DoD / IL-5)
+| Endpoint Type | URL |
+|--------------|-----|
+| Authentication | `https://login.microsoftonline.us` |
+| MDE API | `https://api-gov.securitycenter.microsoft.us` |
+| API Scope | `https://api.securitycenter.microsoft.us/Software.Read` |
+| Redirect URI #1 | `https://login.microsoftonline.us/common/oauth2/nativeclient` |
+| Redirect URI #2 | `msal6aa843c2-fdf2-4622-a627-61a285a4e5c1://auth` |
+
+**Important:** Make sure you use the correct endpoints for your environment. Mixing Commercial and Government endpoints will cause authentication failures.
 
 ---
 
@@ -35,11 +59,18 @@ After creating the app, configure redirect URIs for MSAL.PS:
 1. In your app, go to **Authentication** → **Add a platform**
 2. Select **Mobile and desktop applications**
 3. Check **BOTH** of these boxes:
+
+**For Azure Commercial:**
+   - ✅ `https://login.microsoftonline.com/common/oauth2/nativeclient`
+   - ✅ `msal6aa843c2-fdf2-4622-a627-61a285a4e5c1://auth (MSAL only)`
+
+**For Azure US Government:**
    - ✅ `https://login.microsoftonline.us/common/oauth2/nativeclient`
    - ✅ `msal6aa843c2-fdf2-4622-a627-61a285a4e5c1://auth (MSAL only)`
+
 4. Click **Configure**
 
-**Note:** Both redirect URIs are required. MSAL.PS uses the first URI by default for interactive authentication flows.
+**Note:** Both redirect URIs are required. MSAL.PS uses the first URI by default for interactive authentication flows. The second MSAL URI is the same for both environments.
 
 ### 3. Grant API Permissions (Admin Required)
 1. In your app, go to **API Permissions** → **Add permission**
@@ -64,6 +95,36 @@ You do **NOT** need to create a client secret for this setup.
 ## PowerShell Code
 
 ### Connection Script
+
+**Option 1: Azure Commercial**
+```powershell
+# Azure Commercial MDE API Connection
+# Replace with your actual IDs
+$TenantId = "YOUR-TENANT-ID"
+$ClientId = "YOUR-APP-CLIENT-ID"
+
+# Azure Commercial endpoints
+$AuthEndpoint = "https://login.microsoftonline.com"
+$ApiEndpoint = "https://api.securitycenter.microsoft.com"
+
+# Define the API scope for MDE
+$Scopes = @("https://api.securitycenter.microsoft.com/Software.Read")
+
+# Get authentication token (interactive)
+Write-Host "Authenticating to Azure Commercial..." -ForegroundColor Cyan
+$MsalParams = @{
+    ClientId  = $ClientId
+    TenantId  = $TenantId
+    Scopes    = $Scopes
+}
+
+$AuthResult = Get-MsalToken @MsalParams
+$Token = $AuthResult.AccessToken
+
+Write-Host "✓ Authentication successful" -ForegroundColor Green
+```
+
+**Option 2: Azure US Government (GCC High / DoD)**
 ```powershell
 # Azure Government (GCC High / DoD) MDE API Connection
 # Replace with your actual IDs
@@ -137,7 +198,42 @@ $Response.value | Select-Object deviceName, softwareName, softwareVendor, softwa
 
 ---
 
-## Complete Example Script
+## Complete Example Scripts
+
+### Azure Commercial - Complete Script
+```powershell
+# Complete MDE Software Inventory Script for Azure Commercial
+# Requires: MSAL.PS module
+
+# Configuration
+$TenantId = "YOUR-TENANT-ID"
+$ClientId = "YOUR-APP-CLIENT-ID"
+$AuthEndpoint = "https://login.microsoftonline.com"
+$ApiEndpoint = "https://api.securitycenter.microsoft.com"
+
+# Authenticate
+$MsalParams = @{
+    ClientId  = $ClientId
+    TenantId  = $TenantId
+    Scopes    = @("https://api.securitycenter.microsoft.com/Software.Read")
+}
+
+$AuthResult = Get-MsalToken @MsalParams
+$Headers = @{
+    'Authorization' = "Bearer $($AuthResult.AccessToken)"
+    'Content-Type'  = 'application/json'
+}
+
+# Query API
+$Response = Invoke-RestMethod -Uri "$ApiEndpoint/api/Software" -Headers $Headers -Method Get
+
+# Export results
+$Response.value | Export-Csv -Path ".\MDE-Software-Inventory.csv" -NoTypeInformation
+
+Write-Host "Complete! Found $($Response.value.Count) software entries" -ForegroundColor Green
+```
+
+### Azure US Government - Complete Script
 ```powershell
 # Complete MDE Software Inventory Script for Azure Government
 # Requires: MSAL.PS module
@@ -175,13 +271,15 @@ Write-Host "Complete! Found $($Response.value.Count) software entries" -Foregrou
 
 ## API Endpoints Reference
 
-### Azure Government (IL-5) Endpoints
+### Authentication & API Endpoints by Environment
+
 | Environment | Login Endpoint | API Endpoint |
 |-------------|---------------|--------------|
-| GCC High | `https://login.microsoftonline.us` | `https://api-gov.securitycenter.microsoft.us` |
-| DoD | `https://login.microsoftonline.us` | `https://api-gov.securitycenter.microsoft.us` |
+| **Azure Commercial** | `https://login.microsoftonline.com` | `https://api.securitycenter.microsoft.com` |
+| **GCC High** | `https://login.microsoftonline.us` | `https://api-gov.securitycenter.microsoft.us` |
+| **DoD** | `https://login.microsoftonline.us` | `https://api-gov.securitycenter.microsoft.us` |
 
-### Available Software APIs
+### Available Software APIs (Same for All Environments)
 | Endpoint | Description |
 |----------|-------------|
 | `/api/Software` | Organization-wide software inventory |
@@ -258,11 +356,13 @@ $Response.value  # Contains the actual data
 - The app registration is missing redirect URIs for interactive authentication
 - Go to **Authentication** → **Add platform** → **Mobile and desktop applications**
 - Add BOTH redirect URIs (see section 2.1 above)
+- Make sure you use the correct URI for your environment (.com for Commercial, .us for Government)
 
 **HTTP 401 - "Unauthorized" / "Invalid token"**
 - Token expired (they last 1 hour) - just re-authenticate
-- Using wrong endpoint for government cloud
+- Using wrong endpoint for your environment (Commercial vs Government)
 - Token doesn't have the required scopes/permissions
+- Mixing Commercial and Government endpoints in the same script
 
 **HTTP 403 - "Forbidden" / "Access denied"**
 - Check that admin granted consent for the app permissions
@@ -271,8 +371,8 @@ $Response.value  # Contains the actual data
 - Verify the app registration has the correct delegated permissions
 
 **HTTP 404 - "Resource not found"**
-- Make sure you're using the correct API endpoint for Azure Government
-- Commercial endpoints won't work with Government tenants
+- Make sure you're using the correct API endpoint for your environment
+- Commercial endpoints won't work with Government tenants (and vice versa)
 - Verify the API path is correct (check for typos)
 - The specific resource you're querying may not exist
 
@@ -290,7 +390,12 @@ $Response.value  # Contains the actual data
 
 - **No client secret required** - User-context authentication uses your Entra ID credentials via MSAL.PS
 - Only **delegated permissions** on WindowsDefenderATP are needed (e.g., Software.Read)
+- **Environment consistency is critical** - All endpoints (auth, API, scopes, redirect URIs) must match your environment
 - Tokens expire after 1 hour - re-authenticate as needed
 - Rate limits: 30 calls/minute, 1,000 calls/hour for most APIs
 - MSAL.PS handles token caching automatically (speeds up repeated calls)
 - For large datasets, use the bulk export APIs
+
+### Environment Quick Reference
+**Commercial:** Use `.com` endpoints  
+**Government:** Use `.us` endpoints
