@@ -4,6 +4,8 @@ Author: DCODEV1702 w/ AI.
 
 #>
 # -----------------------------------
+# Create an App Registration in Entra ID
+# Create a secret and copy the value
 # Variables - replace with your own
 # -----------------------------------
 $tenantId     = "PASTE_TENANT_ID_HERE"
