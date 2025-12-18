@@ -77,6 +77,8 @@ After creating the app, configure redirect URIs for MSAL.PS:
 
 **Note:** Both redirect URIs are required. MSAL.PS uses the first URI by default for interactive authentication flows. The second MSAL URI is the same for both environments.
 
+<img width="1745" height="782" alt="image" src="https://github.com/user-attachments/assets/82a8fe8b-7df6-4ee1-bc1d-2c872a5e44a5" />
+
 ### 3. Grant API Permissions (Admin Required)
 1. In your app, go to **API Permissions** → **Add permission**
 2. Select **APIs my organization uses** → Search for `WindowsDefenderATP`
