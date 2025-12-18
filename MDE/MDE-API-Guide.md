@@ -19,6 +19,7 @@
 | Endpoint Type | URL |
 |--------------|-----|
 | Authentication | `https://login.microsoftonline.com` |
+| Auth Endpoint  | `$AuthEndpoint = (Get-AzContext).Environment.ActiveDirectoryAuthority` |
 | MDE API | `https://api.securitycenter.microsoft.com` |
 | API Scope | `https://api.securitycenter.microsoft.com/Software.Read` |
 | Redirect URI #1 | `https://login.microsoftonline.com/common/oauth2/nativeclient` |
@@ -28,6 +29,7 @@
 | Endpoint Type | URL |
 |--------------|-----|
 | Authentication | `https://login.microsoftonline.us` |
+| Auth Endpoint  | `$AuthEndpoint = (Get-AzContext).Environment.ActiveDirectoryAuthority` |
 | MDE API | `https://api-gov.securitycenter.microsoft.us` |
 | API Scope | `https://api.securitycenter.microsoft.us/Software.Read` |
 | Redirect URI #1 | `https://login.microsoftonline.us/common/oauth2/nativeclient` |
