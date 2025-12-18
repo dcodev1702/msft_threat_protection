@@ -88,6 +88,8 @@ After creating the app, configure redirect URIs for MSAL.PS:
 
 **Note:** Only delegated permissions are needed. No application permissions or client secrets required.
 
+<img width="1603" height="876" alt="image" src="https://github.com/user-attachments/assets/bd5a68d3-202a-4b1d-9336-6590ebd4e674" />
+
 ### 4. Copy Required IDs
 From the app's **Overview** page:
 - **Application (client) ID**
