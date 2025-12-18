@@ -13,6 +13,7 @@ $clientId     = "PASTE_CLIENT_ID_HERE"
 $clientSecret = "PASTE_CLIENT_SECRET_HERE"
 
 # The resource scope for Defender for Endpoint
+# Set additional scopes in the App Registration -> API Permissions
 $scope = "https://api.securitycenter.microsoft.com/.default"
 
 # -----------------------------------
@@ -20,7 +21,8 @@ $scope = "https://api.securitycenter.microsoft.com/.default"
 # -----------------------------------
 
 # Build the token endpoint
-$tokenEndpoint = "https://login.microsoftonline.com/$tenantId/oauth2/v2.0/token"
+$authEndpoint = (Get-AzContext).Environment.ActiveDirectoryAuthority
+$tokenEndpoint = "$authEndpoint/$tenantId/oauth2/v2.0/token"
 
 # Body for the OAuth 2.0 client_credentials flow
 $body = [ordered]@{
